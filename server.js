@@ -1,82 +1,46 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
+import { sequelize } from './db/mysql.js';
+import mongoose from 'mongoose';
+import routes from './routes/index.js';
+
+
 dotenv.config();
 
-import { sequelize } from './db/mysql.js';
-import mongoose from './db/mongo.js';
-import { GameConfig } from './models/GameConfig.js';
-
-
-// Import des modèles Sequelize + Mongoose
-import './models/index.js';
-
-// console.clear();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
-// Route principale
+// Routes
+app.use('/api', routes);
+
+// Test route
 app.get('/', (req, res) => {
   res.send('API Librairie JV 🚀 - Connexions DB OK');
 });
 
-// Route de test pour MySQL et MongoDB
-app.get('/test', async (req, res) => {
+const startServer = async () => {
   try {
-    // Test MySQL
-    const [rows] = await sequelize.query('SELECT 1 + 1 AS result');
+    // MySQL
+    await sequelize.authenticate();
+    console.log('✅ MySQL connected');
 
-    // Test MongoDB
-    const mongoStats = await mongoose.connection.db.stats();
-
-    res.json({
-      mysql: rows[0].result,
-      mongoCollections: mongoStats.collections
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/gameconfig', async (req, res) => {
-  try {
-    const config = new GameConfig(req.body);
-    await config.save();
-    res.status(201).json(config);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Récupérer tous les configs de jeu
-app.get('/gameconfig', async (req, res) => {
-  try {
-    const configs = await GameConfig.find();
-    res.json(configs);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Fonction pour démarrer le serveur après sync
-async function startServer() {
-  try {
-    // Synchronisation Sequelize : crée ou met à jour les tables
-    await sequelize.sync({ alter: true });
-    console.log('✅ MySQL tables synced');
-
-    // Connexion MongoDB
-    await mongoose.connection;
+    // MongoDB
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('✅ MongoDB connected');
 
-    // Lancement serveur
+    // Synchroniser les modèles Sequelize
+    await sequelize.sync({ alter: true });
+
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error('❌ Error starting server:', err);
   }
-}
+};
 
 startServer();
