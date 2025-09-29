@@ -1,74 +1,82 @@
-// controllers/userController.js
+import { BadRequestError } from '../errors/api.error.js';
 import * as userService from '../services/userService.js';
 
-export async function createUser(req, res) {
+export async function register(req, res, next) {
   try {
-    const { username, email, password } = req.body;
-
-    // Validation basique
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: 'Tous les champs sont requis' });
-    }
-
-    // Vérifier si l’email existe déjà
-    const existing = await userService.findUserByEmail(email);
-    if (existing) {
-      return res.status(409).json({ message: 'Email déjà utilisé' });
-    }
-
-    const user = await userService.createUser({ username, email, password });
-    res.status(201).json(user);
+    const { username, email, password } = req.body
+    const user = await userService.register({ username, email, password });
+    res.json(user);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function getUsers(req, res) {
+export async function login(req,res,next) {
+  try {
+    const {email, password} = req.body
+    const user = await userService.login({email, password})
+    res.json(user)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function getUsers(req, res, next) {
   try {
     const users = await userService.getAllUsers();
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function getUserById(req, res) {
+export async function getUserById(req, res, next) {
   try {
-    const user = await userService.getUserById(req.params.id);
-    if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+    const id = req.params.id
+    const user = await userService.getUserById(id);
     res.json(user);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function updateUser(req, res) {
+export async function getUserByEmail(req, res, next) {
   try {
-    const { id } = req.params;
-    const updated = await userService.updateUser(id, req.body);
-    if (!updated) return res.status(404).json({ message: 'Utilisateur introuvable' });
-    res.json(updated);
+    const email = req.body.email
+    const user = await userService.getUserByEmail(email);
+    res.json(user);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function deleteUser(req, res) {
+export async function updateUser(req, res, next) {
   try {
     const { id } = req.params;
+    const { username, email, password } = req.body
+    const updatedUser = await userService.updateUser(id, { username, email, password });
+    res.json(updatedUser);
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function deleteUser(req, res, next) {
+  try {
+    const { id } = req.params;
+    console.log(id)
     const deleted = await userService.deleteUser(id);
-    if (!deleted) return res.status(404).json({ message: 'Utilisateur introuvable' });
     res.json({ message: 'Utilisateur supprimé' });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function deleteAllUsers(req, res) {
+export async function deleteAllUsers(req, res, next) {
   try {
     await userService.deleteAllUsers();
     res.json({ message: 'Tous les utilisateurs ont été supprimés' });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
