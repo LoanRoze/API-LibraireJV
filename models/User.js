@@ -31,6 +31,10 @@ export async function getUserByEmail(email) {
   return await User.findOne({ where: { email } });
 }
 
+export async function getAllUsers() {
+  return await User.findAll()
+}
+
 export async function updateUser(id, payload) {
   const user = await getUserById(id);
   if (!user) return null;
@@ -41,5 +45,11 @@ export async function deleteUser(id) {
   const user = await getUserById(id);
   if (!user) return null;
   await user.destroy();
+  return true;
+}
+
+export async function deleteAllUsersAndResetIndex() {
+  await User.destroy({ truncate: { cascade: false } });
+  await sequelize.query("ALTER TABLE users AUTO_INCREMENT = 1;");
   return true;
 }
