@@ -1,4 +1,3 @@
-// models/UserRole.js
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../db/mysql.js';
 
@@ -17,7 +16,6 @@ export const UserRole = sequelize.define('user_roles', {
   freezeTableName: true
 });
 
-// Fonctions utilitaires (CRUD pivot)
 export async function assignRoleToUser(userId, roleId) {
   return await UserRole.findOrCreate({ where: { userId, roleId } })
     .then(([record]) => record);

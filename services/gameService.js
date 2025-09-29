@@ -1,27 +1,23 @@
 import { Game } from '../models/Game.js';
 
 export async function getAllGames() {
-  return await Game.findAll();
+  return await Game.getAllGames(); 
 }
 
 export async function getGameById(id) {
-  return await Game.findByPk(id);
+  return await Game.getGameById(id);
 }
 
 export async function createGame(data) {
-  return await Game.create(data);
+  return await Game.createGame(data); 
 }
 
 export async function updateGame(id, data) {
-  const game = await Game.findByPk(id);
-  if (!game) return null;
-  return await game.update(data);
+  return await Game.updateGame(id, data); 
 }
 
 export async function deleteGame(id) {
-  const game = await Game.findByPk(id);
-  if (!game) return null;
-  return await game.destroy();
+  return await Game.deleteGame(id); 
 }
 
 export async function deleteAllGames() {

@@ -1,32 +1,27 @@
 import { Role } from '../models/Role.js';
 
 export async function getAllRoles() {
-  return await Role.findAll();
+  return await Role.getAllRoles(); 
 }
 
 export async function getRoleById(id) {
-  return await Role.findByPk(id);
+  return await Role.getRoleById(id); 
 }
 
 export async function createRole(data) {
-  return await Role.create(data);
+  return await Role.createRole(data);
 }
 
 export async function updateRole(id, data) {
-  const role = await Role.findByPk(id);
-  if (!role) return null;
-  return await role.update(data);
+  return await Role.updateRole(id, data);
 }
 
 export async function deleteRole(id) {
-  const role = await Role.findByPk(id);
-  if (!role) return null;
-  await role.destroy();
-  return true;
+  return await Role.deleteRole(id);
 }
 
 export async function findRoleByName(name) {
-  return await Role.findOne({ where: { name } });
+  return await Role.findOne({ where: { name } }); 
 }
 
 export async function deleteAllRoles() {
