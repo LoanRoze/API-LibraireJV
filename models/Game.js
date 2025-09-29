@@ -1,10 +1,9 @@
-// models/Game.js
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../db/mysql.js';
 
 export const Game = sequelize.define('Game', {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  title: { type: DataTypes.STRING, allowNull: false, unique: true },
+  title: { type: DataTypes.STRING, allowNull: false, unique: 'unique_game_title' }, // Named unique constraint
   description: { type: DataTypes.TEXT, allowNull: true },
   genre: { type: DataTypes.STRING, allowNull: true },
   releaseYear: { type: DataTypes.INTEGER, allowNull: true },
@@ -21,7 +20,6 @@ export const Game = sequelize.define('Game', {
   }
 });
 
-// CRUD
 export async function createGame(payload) {
   return await Game.create(payload);
 }
@@ -31,7 +29,6 @@ export async function getGameById(id) {
 }
 
 export async function getAllGames(options = {}) {
-  // options peut contenir limit, offset, where, order ...
   return await Game.findAll(options);
 }
 

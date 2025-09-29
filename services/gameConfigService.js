@@ -12,7 +12,6 @@ export async function createOrUpdateGameConfig(gameId, data) {
   );
 }
 
-// Add missing functions
 export async function getConfig(gameId) {
   return await GameConfig.findOne({ gameId });
 }

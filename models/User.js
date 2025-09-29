@@ -3,8 +3,8 @@ import { sequelize } from '../db/mysql.js';
 
 export const User = sequelize.define('User', {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  username: { type: DataTypes.STRING, allowNull: false, unique: 'unique_username' }, // Use named unique constraint
-  email: { type: DataTypes.STRING, allowNull: true, unique: 'unique_email' },       // Use named unique constraint
+  username: { type: DataTypes.STRING, allowNull: false, unique: 'unique_user_username' }, // Named unique constraint
+  email: { type: DataTypes.STRING, allowNull: true, unique: 'unique_user_email' },       // Named unique constraint
   password: { type: DataTypes.STRING, allowNull: false } // Store hashed password
 }, {
   tableName: 'users',

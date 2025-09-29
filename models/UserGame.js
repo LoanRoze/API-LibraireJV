@@ -16,7 +16,6 @@ export const UserGame = sequelize.define('user_games', {
   freezeTableName: true
 });
 
-// CRUD utility functions
 export async function createUserGame(data) {
   return await UserGame.create(data);
 }

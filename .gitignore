@@ -16,6 +16,7 @@ logs/
 docker-compose.override.yml
 **/mysql_data/
 **/mongo_data/
+init_mysql/
 
 # VSCode
 .vscode/
