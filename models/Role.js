@@ -10,13 +10,16 @@ export const Role = sequelize.define('Role', {
   timestamps: true
 });
 
-// CRUD
 export async function createRole({ name, description }) {
   return await Role.create({ name, description });
 }
 
 export async function getRoleById(id) {
   return await Role.findByPk(id);
+}
+
+export async function getRoleByName(name) {
+  return await Role.findOne({ where: { name: name } })
 }
 
 export async function getAllRoles() {
@@ -34,4 +37,10 @@ export async function deleteRole(id) {
   if (!role) return null;
   await role.destroy();
   return true;
+}
+
+export async function deleteAllRolesAndResetIndex() {
+  await Role.destroy({ truncate: { cascade : false }})
+  await sequelize.query("ALTER TABLE roles AUTO_INCREMENT = 1;")
+  return true
 }

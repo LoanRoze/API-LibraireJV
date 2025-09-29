@@ -1,29 +1,81 @@
-import { Role } from '../models/Role.js';
+import { format } from 'mysql2';
+import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
+import * as Role from '../models/Role.js';
 
-export async function getAllRoles() {
-  return await Role.getAllRoles(); 
+export async function createRole({ name, description }) {
+  if (!name || !description) {
+    throw new BadRequestError("Tous les champs sont requis")
+  }
+  const existing = await Role.getRoleByName(name);
+  if (existing) {
+    throw new ConflictError(`Le rôle "${name}" existe déjà`);
+  }
+
+  const role = await Role.createRole({ name, description })
+  return role.dataValues;
 }
 
 export async function getRoleById(id) {
-  return await Role.getRoleById(id); 
+  const role = await Role.getRoleById(id)
+  if (!role) {
+    throw new NotFoundError('Role non trouvé')
+  }
+  return {
+    name: role.name,
+    description: role.description
+  };
 }
 
-export async function createRole(data) {
-  return await Role.createRole(data);
+export async function getRoleByName(name) {
+  const role = await Role.getRoleByName(name)
+  if (!role) {
+    throw new NotFoundError('Role non trouvé')
+  }
+  return {
+    name: role.name,
+    description: role.description
+  };
 }
 
-export async function updateRole(id, data) {
-  return await Role.updateRole(id, data);
+export async function getAllRoles() {
+  const roles = await Role.getAllRoles();
+  const formattedRoles = roles.map((role) => {
+    return {
+      name: role.name,
+      description: role.description
+    }
+  })
+  return formattedRoles
+}
+
+
+
+export async function updateRole(id, { name, description }) {
+  if (!name || !description) {
+    throw new BadRequestError("Tous les champs sont requis")
+  }
+  const existing = await Role.getRoleByName(name);
+  if (existing) {
+    throw new ConflictError(`Le rôle "${name}" existe déjà`);
+  }
+  const role = await Role.getRoleById(id)
+  if (!role) {
+    throw new NotFoundError("Le rôle n'existe pas")
+  }
+
+  const updatedRole = await Role.updateRole(id, { name, description });
+  return updatedRole.dataValues;
 }
 
 export async function deleteRole(id) {
+  const role = await Role.getRoleById(id);
+  if (!role) throw new NotFoundError('Utilisateur non trouvé');
+
   return await Role.deleteRole(id);
 }
 
-export async function findRoleByName(name) {
-  return await Role.findOne({ where: { name } }); 
-}
+
 
 export async function deleteAllRoles() {
-  return await Role.destroy({ where: {} });
+  return await Role.deleteAllRolesAndResetIndex();
 }

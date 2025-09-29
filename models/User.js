@@ -18,7 +18,6 @@ export const User = sequelize.define('User', {
   }
 });
 
-// CRUD / utilitaires
 export async function createUser({ username, email, password }) {
   return await User.create({ username, email, password });
 }
