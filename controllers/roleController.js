@@ -1,57 +1,51 @@
 // controllers/roleController.js
 import * as roleService from '../services/roleService.js';
 
-export async function createRole(req, res) {
+export async function createRole(req, res, next) {
   try {
-    const { name } = req.body;
-    if (!name) return res.status(400).json({ message: 'Le nom est requis' });
-
-    const existing = await roleService.findRoleByName(name);
-    if (existing) return res.status(409).json({ message: 'Rôle déjà existant' });
-
-    const role = await roleService.createRole({ name });
-    res.status(201).json(role);
+    const { name, description } = req.body;
+    const role = await roleService.createRole({ name, description });
+    res.json(role);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function getRoles(req, res) {
+export async function getRoles(req, res, next) {
   try {
     const roles = await roleService.getAllRoles();
     res.json(roles);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function updateRole(req, res) {
+export async function updateRole(req, res, next) {
   try {
     const { id } = req.params;
-    const updated = await roleService.updateRole(id, req.body);
-    if (!updated) return res.status(404).json({ message: 'Rôle introuvable' });
-    res.json(updated);
+    const { name, description } = req.body
+    const updatedRole = await roleService.updateRole(id, {name, description});
+    res.json(updatedRole);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function deleteRole(req, res) {
+export async function deleteRole(req, res, next) {
   try {
     const { id } = req.params;
-    const deleted = await roleService.deleteRole(id);
-    if (!deleted) return res.status(404).json({ message: 'Rôle introuvable' });
+    await roleService.deleteRole(id);
     res.json({ message: 'Rôle supprimé' });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }
 
-export async function deleteAllRoles(req, res) {
+export async function deleteAllRoles(req, res, next) {
   try {
     await roleService.deleteAllRoles();
     res.json({ message: 'Tous les rôles ont été supprimés' });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur interne', error: err.message });
+    next(err)
   }
 }

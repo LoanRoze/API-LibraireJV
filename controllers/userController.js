@@ -64,8 +64,7 @@ export async function updateUser(req, res, next) {
 export async function deleteUser(req, res, next) {
   try {
     const { id } = req.params;
-    console.log(id)
-    const deleted = await userService.deleteUser(id);
+    await userService.deleteUser(id);
     res.json({ message: 'Utilisateur supprimé' });
   } catch (err) {
     next(err)
