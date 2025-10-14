@@ -1,4 +1,4 @@
-import { GameConfig } from '../models/mongo/GameConfig.js';
+import { GameConfig } from '../models/index.js';
 
 export async function getGameConfigByGameId(gameId) {
   return await GameConfig.findOne({ gameId });

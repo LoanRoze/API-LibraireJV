@@ -1,5 +1,5 @@
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
-import * as Role from '../models/Role.js';
+import { Role } from '../models/index.js';
 
 export async function createRole({ name, description }) {
   if (!name || !description) {

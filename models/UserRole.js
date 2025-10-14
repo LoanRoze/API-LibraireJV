@@ -2,13 +2,21 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../db/mysql.js';
 
 export const UserRole = sequelize.define('user_roles', {
-  userId: {
+   userId: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    primaryKey: true,
+    references: {
+      model: 'users',
+      key: 'id'
+    }
   },
   roleId: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    primaryKey: true,
+    references: {
+      model: 'roles',
+      key: 'id'
+    }
   }
 }, {
   tableName: 'user_roles',
@@ -35,5 +43,13 @@ export async function getRolesForUser(userId) {
 export async function getUsersWithRole(roleId) {
   return await UserRole.findAll({ where: { roleId } });
 }
+export async function checkIfUserRoleExists(userId, roleId) {
+  const userRole = await UserRole.findOne({where : {userId: userId, roleId: roleId}})
+  return userRole
+}
 
-
+export async function deleteAllUserRolesAndResetIndex() {
+    await UserRole.destroy({ truncate: { cascade: false } });
+    await sequelize.query("ALTER TABLE user_roles AUTO_INCREMENT = 1;");
+    return true;
+}

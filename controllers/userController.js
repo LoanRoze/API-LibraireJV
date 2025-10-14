@@ -1,5 +1,4 @@
-import { BadRequestError } from '../errors/api.error.js';
-import * as userService from '../services/userService.js';
+import { userService } from '../services/index.js';
 
 export async function register(req, res, next) {
   try {
