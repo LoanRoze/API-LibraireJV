@@ -1,4 +1,4 @@
-import * as gameService from '../services/gameService.js';
+import { gameService } from '../services/index.js';
 
 export async function createGame(req, res) {
   try {

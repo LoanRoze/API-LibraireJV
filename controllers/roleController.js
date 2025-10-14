@@ -1,5 +1,4 @@
-// controllers/roleController.js
-import * as roleService from '../services/roleService.js';
+import { roleService } from '../services/index.js';
 
 export async function createRole(req, res, next) {
   try {

@@ -1,5 +1,5 @@
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js'
-import * as Game from '../models/Game.js';
+import { Game } from '../models/index.js';
 
 export async function createGame({ title, description, genre, releaseYear, logoUrl }) {
   if (!title || !description || !genre || !releaseYear || !logoUrl) {

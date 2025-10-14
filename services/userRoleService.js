@@ -1,44 +1,74 @@
-import { UserRole, User, Role } from '../models/index.js';
+import { User, Role, UserRole } from '../models/index.js';
 
-export async function getUserRoles() {
-  return await UserRole.findAll({
-    include: [
-      { model: User, as: 'user' },
-      { model: Role, as: 'role' }
-    ]
-  });
-}
+import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
 
-export async function getUserRoleById(id) {
-  return await UserRole.findByPk(id, {
-    include: [
-      { model: User, as: 'user' },
-      { model: Role, as: 'role' }
-    ]
-  });
-}
-
-export async function assignRoleToUser(userId, roleId) {
+export async function assignRoleToUser({ userId, roleId }) {
+  if (!userId || !roleId) {
+    throw new BadRequestError("Tous les champs sont requis")
+  }
+  const user = await User.getUserById(userId)
+  const role = await Role.getUserById(roleId)
+  if (!user || !role) {
+    throw new NotFoundError("Le role ou l'utilisateur n'existent pas")
+  }
+  const existing = await UserRole.checkIfUserRoleExists(userId, gameId)
+  if (existing) {
+    throw new ConflictError("Ce role appartient déjà a cet utilisateur")
+  }
   return await UserRole.create({ userId, roleId });
 }
 
-export async function updateUserRole(id, data) {
-  const userRole = await UserRole.findByPk(id);
-  if (!userRole) return null;
+export async function getUserRoles() {
+  const userRoles = await UserRole.getAllUserRoles()
+  const formattedUserRoles = userRoles.map((userGame) => {
+    return {
+      userId: userGame.userId,
+      roleId: userGame.roleId
+    }
+  })
+  return formattedUserRoles;
+}
+
+export async function getUserRoleById(id) {
+  const userRole = await UserRole.getUserRoleById(id)
+  if (!userRole) {
+    throw new NotFoundError('User-Role non trouvé')
+  }
+  return {
+    userId: userRole.userId,
+    gameId: userRole.gameId
+  };
+}
+
+
+export async function updateUserRole(id, { userId, roleId }) {
+  if (!userId || !roleId) {
+    throw new BadRequestError("Tous les champs sont requis")
+  }
+  const user = await User.getUserById(userId)
+  const role = await Role.getUserById(roleId)
+  if (!user || !role) {
+    throw new NotFoundError("Le role ou l'utilisateur n'existent pas")
+  }
+  const userRole = await UserRole.getUserRoleById(id)
+  if (!userRole) {
+    throw new NotFoundError('User-Role non trouvé')
+  }
+  const existing = await UserRole.checkIfUserRoleExists(userId, gameId)
+  if (existing) {
+    throw new ConflictError("Ce role appartient déjà a cet utilisateur")
+  }
   return await userRole.update(data);
 }
 
 export async function deleteUserRole(id) {
-  const userRole = await UserRole.findByPk(id);
-  if (!userRole) return null;
-  await userRole.destroy();
-  return userRole;
-}
-
-export async function findUserRole(userId, roleId) {
-  return await UserRole.findOne({ where: { userId, roleId } });
+  const userRole = await UserRole.getUserRoleById(id);
+  if (!userRole) {
+    throw new NotFoundError('User-Role non trouvé')
+  }
+  return await userRole.deleteUserRole();
 }
 
 export async function deleteAllUserRoles() {
-  return await UserRole.destroy({ where: {} });
+  return await UserRole.deleteAllUserRolesAndResetIndex();
 }

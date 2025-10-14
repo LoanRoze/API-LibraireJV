@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import * as User from '../models/User.js';
+import { User } from '../models/index.js';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
 
 // CREATE

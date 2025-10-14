@@ -1,5 +1,5 @@
 import express from 'express';
-import * as userRoleController from '../controllers/userRoleController.js';
+import { userRoleController } from '../controllers/index.js';
 
 const router = express.Router();
 
