@@ -1,4 +1,3 @@
-import { format } from 'mysql2';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
 import * as Role from '../models/Role.js';
 
