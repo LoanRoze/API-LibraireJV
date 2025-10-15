@@ -1,24 +1,24 @@
-import { User, Game, UserGame } from '../models/index.js';
+import { userRepository, gameRepository, userGameRepository } from '../repository/index.js';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
 
 export async function createUserGame({ userId, gameId }) {
   if (!userId || !gameId) {
     throw new BadRequestError("Tous les champs sont requis")
   }
-  const user = await User.getUserById(userId)
-  const game = await Game.getUserById(gameId)
+  const user = await userRepository.getUserById(userId)
+  const game = await gameRepository.getUserById(gameId)
   if (!user || !game) {
     throw new NotFoundError("Le jeu ou l'utilisateur n'existent pas")
   }
-  const existing = await UserGame.checkIfUserGameExists(userId, gameId)
+  const existing = await userGameRepository.checkIfUserGameExists(userId, gameId)
   if (existing) {
     throw new ConflictError("Ce jeu appartient déjà a cet utilisateur")
   }
-  return await UserGame.createUserGame({ userId, gameId });
+  return await userGameRepository.createUserGame({ userId, gameId });
 }
 
 export async function getAllUserGames() {
-  const userGames = await UserGame.getAllUserGames()
+  const userGames = await userGameRepository.getAllUserGames()
   const formattedUserGames = userGames.map((userGame) => {
     return {
       userId: userGame.userId,
@@ -29,7 +29,7 @@ export async function getAllUserGames() {
 }
 
 export async function getUserGameById(id) {
-  const userGame = await UserGame.getUserGameById(id)
+  const userGame = await userGameRepository.getUserGameById(id)
   if (!userGame) {
     throw new NotFoundError('User-Game non trouvé')
   }
@@ -44,8 +44,8 @@ export async function updateUserGame(id, { userId, gameId }) {
   if (!userId || !gameId) {
     throw new BadRequestError("Tous les champs sont requis")
   }
-  const user = await User.getUserById(userId)
-  const game = await Game.getUserById(gameId)
+  const user = await userRepository.getUserById(userId)
+  const game = await gameRepository.getUserById(gameId)
   if (!user || !game) {
     throw new NotFoundError("Le jeu ou l'utilisateur n'existent pas")
   }
@@ -53,7 +53,7 @@ export async function updateUserGame(id, { userId, gameId }) {
   if (!userGame) {
     throw new NotFoundError('User-Game non trouvé')
   }
-  const existing = await UserGame.checkIfUserGameExists(userId, gameId)
+  const existing = await userGameRepository.checkIfUserGameExists(userId, gameId)
   if (existing) {
     throw new ConflictError("Ce jeu appartient déjà a cet utilisateur")
   }
@@ -69,5 +69,5 @@ export async function deleteUserGame(id) {
 }
 
 export async function deleteAllUserGames() {
-  return await UserGame.deleteAllUserGamesAndResetIndex();
+  return await userGameRepository.deleteAllUserGamesAndResetIndex();
 }

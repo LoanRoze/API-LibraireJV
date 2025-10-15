@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { User } from '../models/index.js';
+import { userRepository } from '../repository/index.js';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
 
 // CREATE
@@ -7,7 +7,7 @@ export async function register({username, email, password}) {
   if (!username || !email || !password) {
     throw new BadRequestError("Tous les champs sont requis")
   }
-  const existing = await User.getUserByEmail(email);
+  const existing = await userRepository.getUserByEmail(email);
   if (existing) {
     throw new ConflictError('Email déjà utilisé');
   }
@@ -15,13 +15,13 @@ export async function register({username, email, password}) {
   const hashedPassword = await bcrypt.hash(password, 10);
   password = hashedPassword;
 
-  const user = await User.createUser({username, email, password})
+  const user = await userRepository.createUser({username, email, password})
   return user.dataValues
 }
 
 // READ
 export async function login(email, password) {
-  const user = await User.getUserByEmail(email);
+  const user = await userRepository.getUserByEmail(email);
   if (!user) {
     throw new NotFoundError('Utilisateur non trouvé');
   }
@@ -38,7 +38,7 @@ export async function login(email, password) {
 }
 
 export async function getUserById(id) {
-  const user = await User.getUserById(id);
+  const user = await userRepository.getUserById(id);
   if (!user) {
     throw new NotFoundError('Utilisateur non trouvé');
   }
@@ -49,7 +49,7 @@ export async function getUserById(id) {
 }
 
 export async function getUserByEmail(email) {
-  const user = await User.getUserByEmail(email);
+  const user = await userRepository.getUserByEmail(email);
   if (!user) {
     throw new NotFoundError('Utilisateur non trouvé');
   }
@@ -60,7 +60,7 @@ export async function getUserByEmail(email) {
 }
 
 export async function getAllUsers() {
-  const users = await User.getAllUsers()
+  const users = await userRepository.getAllUsers()
   const formattedUsers = users.map((user) => {
     return {
       username : user.username,
@@ -75,11 +75,11 @@ export async function updateUser(id, {username, email, password}) {
   if (!username || !email || !password) {
     throw new BadRequestError("Tous les champs sont requis")
   }
-  const user = await User.getUserById(id);
+  const user = await userRepository.getUserById(id);
   if (!user) {
     throw new NotFoundError('Utilisateur non trouvé');
   }
-  const existing = await User.getUserByEmail(email);
+  const existing = await userRepository.getUserByEmail(email);
   if (existing) {
     throw new ConflictError('Email déjà utilisé');
   }
@@ -87,19 +87,19 @@ export async function updateUser(id, {username, email, password}) {
   const hashedPassword = await bcrypt.hash(password, 10);
   password = hashedPassword;
 
-  const updatedUser = await User.updateUser(id, {username, email, password})
+  const updatedUser = await userRepository.updateUser(id, {username, email, password})
   return updatedUser.dataValues
 }
 
 // DELETE
 export async function deleteUser(id) {
-  const user = await User.getUserById(id);
+  const user = await userRepository.getUserById(id);
   if (!user) throw new NotFoundError('Utilisateur non trouvé');
 
-  return await User.deleteUser(id);
+  return await userRepository.deleteUser(id);
 }
 
 export async function deleteAllUsers() {
-  return await User.deleteAllUsersAndResetIndex();
+  return await userRepository.deleteAllUsersAndResetIndex();
 }
 

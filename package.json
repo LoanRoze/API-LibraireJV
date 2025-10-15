@@ -12,8 +12,11 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "setup": "npm install && docker compose up -d && npm run start",
+    "install:all": "docker compose down && docker compose build && docker compose up -d && npm install && npm run start"
   },
   "repository": {
     "type": "git",

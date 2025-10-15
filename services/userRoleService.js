@@ -1,4 +1,4 @@
-import { User, Role, UserRole } from '../models/index.js';
+import { userRepository, roleRepository, userRoleRepository } from '../repository/index.js';
 
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
 
@@ -6,20 +6,20 @@ export async function assignRoleToUser({ userId, roleId }) {
   if (!userId || !roleId) {
     throw new BadRequestError("Tous les champs sont requis")
   }
-  const user = await User.getUserById(userId)
-  const role = await Role.getUserById(roleId)
+  const user = await userRepository.getUserById(userId)
+  const role = await roleRepository.getUserById(roleId)
   if (!user || !role) {
     throw new NotFoundError("Le role ou l'utilisateur n'existent pas")
   }
-  const existing = await UserRole.checkIfUserRoleExists(userId, gameId)
+  const existing = await userRoleRepository.checkIfUserRoleExists(userId, gameId)
   if (existing) {
     throw new ConflictError("Ce role appartient déjà a cet utilisateur")
   }
-  return await UserRole.create({ userId, roleId });
+  return await userRoleRepository.create({ userId, roleId });
 }
 
 export async function getUserRoles() {
-  const userRoles = await UserRole.getAllUserRoles()
+  const userRoles = await userRoleRepository.getAllUserRoles()
   const formattedUserRoles = userRoles.map((userGame) => {
     return {
       userId: userGame.userId,
@@ -30,7 +30,7 @@ export async function getUserRoles() {
 }
 
 export async function getUserRoleById(id) {
-  const userRole = await UserRole.getUserRoleById(id)
+  const userRole = await userRoleRepository.getUserRoleById(id)
   if (!userRole) {
     throw new NotFoundError('User-Role non trouvé')
   }
@@ -45,16 +45,16 @@ export async function updateUserRole(id, { userId, roleId }) {
   if (!userId || !roleId) {
     throw new BadRequestError("Tous les champs sont requis")
   }
-  const user = await User.getUserById(userId)
-  const role = await Role.getUserById(roleId)
+  const user = await userRepository.getUserById(userId)
+  const role = await roleRepository.getUserById(roleId)
   if (!user || !role) {
     throw new NotFoundError("Le role ou l'utilisateur n'existent pas")
   }
-  const userRole = await UserRole.getUserRoleById(id)
+  const userRole = await userRoleRepository.getUserRoleById(id)
   if (!userRole) {
     throw new NotFoundError('User-Role non trouvé')
   }
-  const existing = await UserRole.checkIfUserRoleExists(userId, gameId)
+  const existing = await userRoleRepository.checkIfUserRoleExists(userId, gameId)
   if (existing) {
     throw new ConflictError("Ce role appartient déjà a cet utilisateur")
   }
@@ -62,7 +62,7 @@ export async function updateUserRole(id, { userId, roleId }) {
 }
 
 export async function deleteUserRole(id) {
-  const userRole = await UserRole.getUserRoleById(id);
+  const userRole = await userRoleRepository.getUserRoleById(id);
   if (!userRole) {
     throw new NotFoundError('User-Role non trouvé')
   }
@@ -70,5 +70,5 @@ export async function deleteUserRole(id) {
 }
 
 export async function deleteAllUserRoles() {
-  return await UserRole.deleteAllUserRolesAndResetIndex();
+  return await userRoleRepository.deleteAllUserRolesAndResetIndex();
 }
