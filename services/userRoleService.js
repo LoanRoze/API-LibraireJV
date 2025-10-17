@@ -3,19 +3,20 @@ import { userRepository, roleRepository, userRoleRepository } from '../repositor
 import { BadRequestError, ConflictError, NotFoundError } from '../errors/api.error.js';
 
 export async function assignRoleToUser({ userId, roleId }) {
+  console.log(userId, roleId)
   if (!userId || !roleId) {
     throw new BadRequestError("Tous les champs sont requis")
   }
   const user = await userRepository.getUserById(userId)
-  const role = await roleRepository.getUserById(roleId)
+  const role = await roleRepository.getRoleById(roleId)
   if (!user || !role) {
     throw new NotFoundError("Le role ou l'utilisateur n'existent pas")
   }
-  const existing = await userRoleRepository.checkIfUserRoleExists(userId, gameId)
+  const existing = await userRoleRepository.checkIfUserRoleExists(userId, roleId)
   if (existing) {
     throw new ConflictError("Ce role appartient déjà a cet utilisateur")
   }
-  return await userRoleRepository.create({ userId, roleId });
+  return await userRoleRepository.assignRoleToUser({ userId, roleId });
 }
 
 export async function getUserRoles() {
