@@ -21,7 +21,8 @@ export async function getUserRoleById(req, res) {
 export async function assignRoleToUser(req, res) {
   try {
     const { userId, roleId } = req.body;
-    const newUserRole = await userRoleService.assignRoleToUser(userId, roleId);
+    console.log(userId, roleId)
+    const newUserRole = await userRoleService.assignRoleToUser({userId, roleId});
     res.json(newUserRole);
   } catch (err) {
     res.json({ error: err.message });

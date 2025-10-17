@@ -22,3 +22,15 @@ export class NotFoundError extends ApiError {
     super(message, 404)
   }
 }
+
+export class UnauthorizedError extends ApiError {
+  constructor(message) {
+    super(message, 401)
+  }
+}
+
+export class ForbiddenError extends ApiError {
+  constructor(message) {
+    super(message, 403)
+  }
+}
