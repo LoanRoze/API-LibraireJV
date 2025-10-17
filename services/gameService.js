@@ -12,7 +12,7 @@ export async function createGame({ title, description, genre, releaseYear, logoU
   }
 
   const game = await gameRepository.createGame({ title, description, genre, releaseYear, logoUrl })
-  return game.dataValues;
+  return game;
 }
 
 export async function getAllGames() {

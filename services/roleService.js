@@ -9,9 +9,8 @@ export async function createRole({ name, description }) {
   if (existing) {
     throw new ConflictError(`Le rôle "${name}" existe déjà`);
   }
-
   const role = await roleRepository.createRole({ name, description })
-  return role.dataValues;
+  return role;
 }
 
 export async function getRoleById(id) {
