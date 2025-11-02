@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import { sequelize } from './db/mysql.js';
 import mongoose from 'mongoose';
 import routes from './routes/index.js';
+import { setupSwagger } from './config/swagger.js';
+
 
 
 dotenv.config();
@@ -13,6 +15,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+setupSwagger(app);
+
 
 app.use('/api', routes);
 
@@ -31,7 +36,9 @@ const startServer = async () => {
     await sequelize.sync({ alter: true });
 
     app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`✅ Server running on http://localhost:${PORT}`);
+      console.log(`📘 Documentation Swagger : http://localhost:${PORT}/api-docs`);
+
     });
   } catch (err) {
     console.error('❌ Error starting server:', err);

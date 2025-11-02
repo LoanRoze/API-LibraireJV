@@ -27,3 +27,7 @@ init_mysql/
 Thumbs.db
 
 testPostman.json
+*/output.txt
+
+# Coverage
+coverage/

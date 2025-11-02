@@ -1,0 +1,146 @@
+Voici le contenu de votre dossier ./
+|------------------------------------------------------------------------|
+
+File : gameConfig.js
+Path : .\gameConfig.js
+Weight : 0.27ko
+
+import express from 'express';
+import { gameConfigController } from '../controllers/index.js';
+
+const router = express.Router();
+
+router.get('/:gameId', gameConfigController.getConfig);
+router.post('/:gameId', gameConfigController.setConfig);
+
+export default router;
+
+|------------------------------------------------------------------------|
+
+File : games.js
+Path : .\games.js
+Weight : 0.43ko
+
+import express from 'express';
+import { gameController } from '../controllers/index.js';
+
+const router = express.Router();
+
+router.get('/', gameController.getGames);
+router.get('/:id', gameController.getGameById);
+router.post('/', gameController.createGame);
+router.put('/:id', gameController.updateGame);
+router.delete('/:id', gameController.deleteGame);
+router.delete('/', gameController.deleteAllGames);
+
+export default router;
+
+|------------------------------------------------------------------------|
+
+File : index.js
+Path : .\index.js
+Weight : 0.58ko
+
+import express from 'express';
+
+import userRoutes from './users.js';
+import roleRoutes from './roles.js';
+import gameRoutes from './games.js';
+import gameConfigRoutes from './gameConfig.js';
+import userRoleRoutes from './userRole.js';
+import userGameRoutes from './userGame.js';
+
+const router = express.Router();
+
+router.use('/users', userRoutes);
+router.use('/roles', roleRoutes);
+router.use('/games', gameRoutes);
+router.use('/game-config', gameConfigRoutes);
+router.use('/user-roles', userRoleRoutes);
+router.use('/user-games', userGameRoutes);
+
+export default router;
+
+|------------------------------------------------------------------------|
+
+File : roles.js
+Path : .\roles.js
+Weight : 0.39ko
+
+import express from 'express';
+import { roleController } from '../controllers/index.js';
+
+const router = express.Router();
+
+router.get('/', roleController.getRoles);
+router.post('/', roleController.createRole);
+router.put('/:id', roleController.updateRole);
+router.delete('/:id', roleController.deleteRole);
+router.delete('/', roleController.deleteAllRoles);
+
+export default router;
+
+|------------------------------------------------------------------------|
+
+File : userGame.js
+Path : .\userGame.js
+Weight : 0.49ko
+
+import express from 'express';
+import { userGameController } from '../controllers/index.js';
+
+const router = express.Router();
+
+router.get('/', userGameController.getAllUserGames);
+router.get('/:id', userGameController.getUserGameById);
+router.post('/', userGameController.createUserGame);
+router.put('/:id', userGameController.updateUserGame);
+router.delete('/:id', userGameController.deleteUserGame);
+router.delete('/', userGameController.deleteAllUserGames);
+
+
+export default router;
+
+|------------------------------------------------------------------------|
+
+File : userRole.js
+Path : .\userRole.js
+Weight : 0.49ko
+
+import express from 'express';
+import { userRoleController } from '../controllers/index.js';
+
+const router = express.Router();
+
+router.get('/', userRoleController.getUserRoles);
+router.get('/:id', userRoleController.getUserRoleById);
+router.post('/', userRoleController.assignRoleToUser);
+router.put('/:id', userRoleController.updateUserRole);
+router.delete('/:id', userRoleController.deleteUserRole);
+router.delete('/', userRoleController.deleteAllUserRoles);
+
+export default router;
+
+|------------------------------------------------------------------------|
+
+File : users.js
+Path : .\users.js
+Weight : 0.52ko
+
+import express from 'express';
+import { userController } from '../controllers/index.js';
+
+const router = express.Router();
+
+router.get('/', userController.getUsers);
+router.get('/:id', userController.getUserById);
+router.get('/', userController.getUserByEmail);
+router.post('/', userController.login)
+router.post('/', userController.register);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
+router.delete('/', userController.deleteAllUsers);
+
+export default router;
+
+|------------------------------------------------------------------------|
