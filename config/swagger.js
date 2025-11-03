@@ -1,13 +1,12 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import pkg from './package.json' assert { type: 'json' };
 
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
       title: 'API Librairie de Jeux Vidéo',
-      version: pkg.version,
+      version: '1.0.0',
       description: 'Documentation de l’API LibrairieJV (Node.js, Express, Sequelize, Mongoose, Docker)',
     },
     servers: [
@@ -16,9 +15,17 @@ const options = {
         description: 'Serveur local',
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
-  // 👉 indique où chercher les annotations JSDoc
-  apis: ['./routes/*.js', './controllers/*.js', './models/*.js'],
+  apis: ['./routes/*.js'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
